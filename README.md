@@ -2,29 +2,56 @@
 
 # fp-error-trace
 
-_Small helper that find errors produced in function compositions_
+_Small helper that show errors produced in function compositions._
 
 ## Getting Started
 
 To install:
 
-    npm i --save fp-error-trace
+    npm i -S fp-error-trace
 
-In your project:
+Trace a function:
 
 ``` javascript
- // => Example
+
+const trace = require('fp-error-trace')
+const R = require('ramda')
+const pipe = trace(R.pipe)
+
+const plus = add(1)
+const unexpectedError = () => { throw new Error('some error')}
+
+const triplePlus = pipe(
+    unexpectedError
+    plus, 
+    plus, 
+    plus
+)
+
+// in console: Error occurred in pipe at argument 1 (/your/file.js:3:18)
+
 ```
 
-## Publish
 
-_Execute the command `npm run make:publish`. If UPDATE_GIT_BRANCHES is 'true' branches `develop` and `master` will be update in remote and local repo._
+Trace all library:
 
-```bash
+``` javascript
 
-npm run make:publish <VERSION> <UPDATE_GIT_BRANCHES>
+const trace = require('fp-error-trace')
+const {compose, add} = trace.all(require('ramda'))
 
-# Example: npm run make:publish 1.0.0 true
+const plus = add(1)
+const unexpectedError = () => { throw new Error('some error')}
+
+const triplePlus = compose(
+    plus, 
+    plus, 
+    plus, 
+    unexpectedError
+)
+
+// in console: Error occurred in compose at argument 4 (/your/file.js:3:18)
+
 ```
 
 ## License
